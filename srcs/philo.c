@@ -18,6 +18,7 @@ void status(t_philo_data *data, char *message)
 void _even(t_philo_data *data)
 {
 	int	tmp_time;
+	int sim_stop;
 
 	while (1)
 	{
@@ -33,20 +34,25 @@ void _even(t_philo_data *data)
 		}
 		routine_sleep(data);
 		routine_think(data);
+		pthread_mutex_lock(&data->table->sim_stop_mutex);
+		sim_stop = data->table->sim_stop;
+		pthread_mutex_unlock(&data->table->sim_stop_mutex);
+		if (sim_stop)
+			break;
 	}
 }
 
 void *philo(void *raw_data)
 {
 	t_philo_data	*data = (t_philo_data *)raw_data;
-	int				even;
+	// int				even;
 
-	pthread_mutex_lock(&data->table->philo_count_mutex);
-	even = 0;
-	if (data->table->philo_count % 2 == 0)
-		even = 1;
-	pthread_mutex_unlock(&data->table->philo_count_mutex);
-	if (even == 1)
+	// pthread_mutex_lock(&data->table->philo_count_mutex);
+	// even = 0;
+	// if (data->table->philo_count % 2 == 0)
+		// even = 1;
+	// pthread_mutex_unlock(&data->table->philo_count_mutex);
+	// if (even == 1)
 		_even(data);
 	// else
 		// _odd(data);

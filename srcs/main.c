@@ -17,6 +17,7 @@ int	init(t_table *table, int ac, char **av)
 {
 	int	i;
 	set_from_args(table, ac, av);
+	table->sim_stop = 0;
 	table->philos = malloc(sizeof(pthread_t *) * table->philo_count);
 	table->philos_data = malloc(sizeof(t_philo_data) * table->philo_count);
 	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
@@ -52,11 +53,13 @@ void	free_table_r(t_table *table)
 
 int main(int ac, char **av)
 {
-	t_table table;
-	int		i;
+	int			i;
+	t_table		table;
+	pthread_t	watcher;
 
 	if (!check_ok(ac, av))
 		return (1);
+	pthread_create(&watcher, NULL, watcher_fct, &table);
 	if (!init(&table, ac, av))
 	{
 		free_table_r(&table);
@@ -68,6 +71,7 @@ int main(int ac, char **av)
 		pthread_join(table.philos[i], NULL);
 		i++;
 	}
+	pthread_join(watcher, NULL);
 	free_table_r(&table);
 	return (0);
 }
