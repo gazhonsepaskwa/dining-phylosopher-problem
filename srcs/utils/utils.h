@@ -4,4 +4,5 @@
 long	ft_atoi(const char *str);
 int	is_extended_digit(char *str);
 
+
 #endif

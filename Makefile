@@ -1,5 +1,5 @@
 CC = gcc
-WFLAGS = -Wall -Werror -Wextra -g -g3 -ggdb -fsanitize=address
+WFLAGS = -Wall -Werror -Wextra -g -g3 -ggdb
 
 SRCDIR = srcs
 OBJDIR = objs

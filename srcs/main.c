@@ -1,13 +1,25 @@
 #include "../philo.h"
 #include "utils/utils.h"
 
-int	init(t_table *table)
+void set_from_args(t_table *table, int ac, char **av)
+{
+	table->philo_count = ft_atoi(av[1]);
+	table->die_time = ft_atoi(av[2]) * 1000;
+	table->eat_time = ft_atoi(av[3]) * 1000;
+	table->sleep_time = ft_atoi(av[4]) * 1000;
+	if (ac == 6)
+		table->occurences = ft_atoi(av[5]);
+	else
+		table->occurences = -1;
+}
+
+int	init(t_table *table, int ac, char **av)
 {
 	int	i;
-
+	set_from_args(table, ac, av);
 	table->philos = malloc(sizeof(pthread_t *) * table->philo_count);
 	table->philos_data = malloc(sizeof(t_philo_data) * table->philo_count);
-	table->forks = malloc(sizeof(pthread_mutex_t *) * table->philo_count);
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
 	if (pthread_mutex_init(&table->print_mutex, NULL) != 0)
 		return (0);
 	i = 0;
@@ -33,6 +45,7 @@ void	free_table_r(t_table *table)
 		pthread_mutex_destroy(&table->forks[i]);
 		i++;
 	}
+	pthread_mutex_destroy(&table->print_mutex);
 	free(table->forks);
 	free(table->philos);
 }
@@ -40,16 +53,21 @@ void	free_table_r(t_table *table)
 int main(int ac, char **av)
 {
 	t_table table;
+	int		i;
 
 	if (!check_ok(ac, av))
 		return (1);
-	table.philo_count = ft_atoi(av[1]);
-	init(&table);
+	if (!init(&table, ac, av))
 	{
 		free_table_r(&table);
 		return (1);
 	}
-	// loop to join back all the thread (aka wait theme to finish before ending the main thread)
+	i = 0;
+	while (i < table.philo_count)
+	{
+		pthread_join(table.philos[i], NULL);
+		i++;
+	}
 	free_table_r(&table);
 	return (0);
 }

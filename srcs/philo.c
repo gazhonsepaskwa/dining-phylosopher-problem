@@ -1,10 +1,54 @@
 #include "../philo.h"
-void *philo(void *raw_data)
+#include "utils/utils.h"
+#include <sys/time.h>
+#include <time.h>
+
+void status(t_philo_data *data, char *message)
 {
-	t_philo_data *data = (t_philo_data *)raw_data;
-	printf("Philo %d is thinking...\n", data->index);
-	sleep(1);
-	printf("Philo %d died...\n", data->index);
-	return (NULL);
+	struct timeval	tv;
+	long long		timestamp_in_ms;
+
+    gettimeofday(&tv, NULL);
+	timestamp_in_ms = (long long)(tv.tv_sec) * 1000 + (tv.tv_usec / 1000);
+	pthread_mutex_lock(&data->table->print_mutex);
+	printf("%lld %d %s\n", timestamp_in_ms, data->index, message);
+	pthread_mutex_unlock(&data->table->print_mutex);
 }
 
+void _even(t_philo_data *data)
+{
+	int	tmp_time;
+
+	while (1)
+	{
+		if (data->index % 2 != 0)
+			routine_eat(data);
+		else
+		{
+			pthread_mutex_lock(&data->table->eat_time_mutex);
+			tmp_time = data->table->eat_time;
+			pthread_mutex_unlock(&data->table->eat_time_mutex);
+			usleep(tmp_time / 2);
+			routine_eat(data);
+		}
+		routine_sleep(data);
+		routine_think(data);
+	}
+}
+
+void *philo(void *raw_data)
+{
+	t_philo_data	*data = (t_philo_data *)raw_data;
+	int				even;
+
+	pthread_mutex_lock(&data->table->philo_count_mutex);
+	even = 0;
+	if (data->table->philo_count % 2 == 0)
+		even = 1;
+	pthread_mutex_unlock(&data->table->philo_count_mutex);
+	if (even == 1)
+		_even(data);
+	// else
+		// _odd(data);
+	return (NULL);
+}
