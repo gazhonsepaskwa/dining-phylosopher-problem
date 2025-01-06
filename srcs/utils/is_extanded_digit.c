@@ -21,5 +21,5 @@ int	is_extended_digit(char *str)
 			return (0);
 		i++;
 	}
-return (1);
+	return (1);
 }

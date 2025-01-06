@@ -1,13 +1,14 @@
 #include "../philo.h"
 #include "utils/utils.h"
 
-int check_ok(int ac, char **av)
+int	check_ok(int ac, char **av)
 {
 	int	i;
 
 	if (ac < 5 || ac > 6)
 	{
-		write(2, "Usage: ./philo philo_count die_t eat_t sleep_t [eat_occurency]\n", 64);
+		write(2, "Usage: ./philo philo_count die_time \
+eat_time sleep_time [eat_occurencies]\n", 75);
 		return (0);
 	}
 	if (ft_atoi(av[1]) == 0)
