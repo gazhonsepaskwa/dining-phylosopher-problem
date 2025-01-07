@@ -7,8 +7,8 @@ void	take_a_fork(t_philo_data *data, int *next_fork)
 	pthread_mutex_lock(&data->table->philo_count_mutex);
 	philo_count = data->table->philo_count;
 	pthread_mutex_unlock(&data->table->philo_count_mutex);
-	(*next_fork) = (data->index) % philo_count;
-	pthread_mutex_lock(&data->table->forks[data->index - 1]);
+	(*next_fork) = (data->index + 1) % philo_count;
+	pthread_mutex_lock(&data->table->forks[data->index]);
 	status(data, "has taken a fork");
 	pthread_mutex_lock(&data->table->forks[(*next_fork)]);
 	status(data, "has taken a fork");
@@ -26,7 +26,7 @@ long long	routine_eat(t_philo_data *data)
 	time_tmp = data->table->eat_time;
 	pthread_mutex_unlock(&data->table->eat_time_mutex);
 	usleep(time_tmp);
-	pthread_mutex_unlock(&data->table->forks[data->index -1]);
+	pthread_mutex_unlock(&data->table->forks[data->index]);
 	pthread_mutex_unlock(&data->table->forks[next_fork]);
 	pthread_mutex_lock(&data->table->eat_count_mutex);
 	data->table->eat_count += 1;

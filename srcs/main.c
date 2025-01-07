@@ -23,6 +23,7 @@ int	init_mutexes(t_table *table)
 		|| pthread_mutex_init(&table->sleep_time_mutex, NULL) != 0
 		|| pthread_mutex_init(&table->sim_stop_mutex, NULL) != 0
 		|| pthread_mutex_init(&table->eat_count_mutex, NULL) != 0
+		|| pthread_mutex_init(&table->die_time_mutex, NULL) != 0
 		|| pthread_mutex_init(&table->death_mutex, NULL) != 0
 		|| pthread_mutex_init(&table->philo_count_mutex, NULL) != 0)
 		return (0);
@@ -72,6 +73,7 @@ void	free_table_r(t_table *table)
 	pthread_mutex_destroy(&table->eat_count_mutex);
 	pthread_mutex_destroy(&table->philo_count_mutex);
 	pthread_mutex_destroy(&table->sleep_time_mutex);
+	pthread_mutex_destroy(&table->die_time_mutex);
 	pthread_mutex_destroy(&table->sim_stop_mutex);
 	pthread_mutex_destroy(&table->death_mutex);
 	free(table->forks);
